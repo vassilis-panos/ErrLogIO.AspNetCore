@@ -80,8 +80,10 @@ public class ErrLogIO
                 EnvironmentData = GetEnvironmentData()
             };
 
-            await _httpClient.PostAsJsonAsync(
+            var response = await _httpClient.PostAsJsonAsync(
                 "api/v1/log", requestBody, cancellationToken);
+
+            response.EnsureSuccessStatusCode();
 
             _logger.LogInformation("Logging completed successfully");
         }
