@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
+﻿using ErrLogIO.AspNetCore;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 
-namespace ErrLogIO.AspNetCore;
+namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ErrLogIOExtensions
 {
@@ -17,22 +17,33 @@ public static class ErrLogIOExtensions
     public static IServiceCollection AddErrLogIO(
         this IServiceCollection services, Action<ErrLogIOOptions> configure)
     {
+        services.AddErrLogIO();
         services.Configure(configure);
+        return services;
+    }
 
-        services.AddHttpClient<ErrLogIO>(options =>
+    public static IServiceCollection AddErrLogIO(this IServiceCollection services)
+    {
+        if (services == null)
+            throw new ArgumentNullException(nameof(services));
+
+        services.AddHttpClient<ErrLogIOService>(options =>
         {
             options.BaseAddress = new Uri("https://relay.errlog.io");
             options.Timeout = TimeSpan.FromSeconds(5);
         });
 
-        services.TryAddSingleton<ErrLogIO>();
+        services.TryAddSingleton<ErrLogIOService>();
 
         return services;
     }
 
     public static IApplicationBuilder UseErrLogIO(this IApplicationBuilder app)
     {
-        var service = app.ApplicationServices.GetService<ErrLogIO>();
+        if (app == null)
+            throw new ArgumentNullException(nameof(app));
+
+        var service = app.ApplicationServices.GetService<ErrLogIOService>();
 
         if (service is null)
         {

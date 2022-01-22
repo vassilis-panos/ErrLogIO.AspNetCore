@@ -13,18 +13,18 @@ using System.Threading.Tasks;
 
 namespace ErrLogIO.AspNetCore;
 
-public class ErrLogIO
+public class ErrLogIOService
 {
     private readonly HttpClient _httpClient;
     private readonly ErrLogIOOptions _options;
-    private readonly ILogger<ErrLogIO> _logger;
+    private readonly ILogger<ErrLogIOService> _logger;
     private readonly string[] _keysToExclude;
     private readonly bool _hideAllRequestValues;
 
-    public ErrLogIO(
+    public ErrLogIOService(
         HttpClient httpClient, 
         IOptions<ErrLogIOOptions> options, 
-        ILogger<ErrLogIO> logger)
+        ILogger<ErrLogIOService> logger)
     {
         _httpClient = httpClient;
         _options = options.Value;

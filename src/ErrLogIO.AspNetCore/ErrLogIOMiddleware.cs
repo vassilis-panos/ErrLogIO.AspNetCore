@@ -7,9 +7,9 @@ namespace ErrLogIO.AspNetCore;
 public class ErrLogIOMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly ErrLogIO _errLogIO;
+    private readonly ErrLogIOService _errLogIO;
 
-    public ErrLogIOMiddleware(RequestDelegate next, ErrLogIO errLogIO)
+    public ErrLogIOMiddleware(RequestDelegate next, ErrLogIOService errLogIO)
     {
         _next = next;
         _errLogIO = errLogIO;
