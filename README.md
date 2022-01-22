@@ -4,18 +4,19 @@ ASP.NET Core library for [ErrLog.IO](https://errlog.io/)
 
 ## Installation
 
+.NET CLI
 ```
-> dotnet add package ErrLogIO.AspNetCore
-```
-
-```
-PM> Install-Package ErrLogIO.AspNetCore
+dotnet add package ErrLogIO.AspNetCore
 ```
 
-## Usage
+Package Manager
+```
+Install-Package ErrLogIO.AspNetCore
+```
+
+## Configuration
 
 ```csharp
-
 public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
@@ -26,7 +27,6 @@ public class Startup
 ```
 
 ```csharp
-
 public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
@@ -34,6 +34,8 @@ public class Startup
         services.AddErrLogIO(options =>
         {
             options.ApiKey = "API-KEY";
+            options.AppName = "MyApp";
+            options.Language = Language.CSharp;
             options.KeysToExclude = new [] {"password"};
             options.HideAllRequestValues = true;
         });
@@ -41,13 +43,49 @@ public class Startup
 }
 ```
 
-```csharp
+### appsettings.json
 
+```json
+{
+  "ErrLogIO": {
+    "ApiKey": "API_KEY"
+  }
+}
+```
+
+```csharp
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.Configure<ErrLogIOOptions>(
+            Configuration.GetSection("ErrLogIO"));
+        services.AddErrLogIO();
+    }
+}
+```
+
+## Logging exceptions
+
+To log every uncaught exception to ErrLog.IO, call `UseErrLogIO` in the Configure method. Please make sure to call the `UseErrLogIO` after installation of other pieces of middleware handling exceptions and auth, but **before** any calls to `UseEndpoints`, `UseMvc` etc.
+
+```csharp
 public class Startup
 {
     public void Configure(IApplicationBuilder app)
     {
+        app.UseProblemDetails();
         app.UseErrLogIO();
+        
+        ...
+        ...
+        ...
+        
+        app.UseRouting();
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
     }
 }
 ```
