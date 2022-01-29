@@ -36,7 +36,7 @@ public class ErrLogIOService
         _hideAllRequestValues = _options.HideAllRequestValues;
     }
 
-    public async Task LogAsync(
+    public async Task LogExceptionAsync(
         Exception exception, 
         HttpContext? httpContext = default,
         string? pageName = default, 

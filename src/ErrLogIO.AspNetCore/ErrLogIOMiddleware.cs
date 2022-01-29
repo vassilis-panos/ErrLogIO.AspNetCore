@@ -23,7 +23,7 @@ public class ErrLogIOMiddleware
         }
         catch (Exception ex)
         {
-            await _errLogIO.LogAsync(ex, httpContext);
+            await _errLogIO.LogExceptionAsync(ex, httpContext);
             throw;
         }
     }
