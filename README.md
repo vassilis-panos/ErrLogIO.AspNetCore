@@ -89,3 +89,38 @@ public class Startup
     }
 }
 ```
+
+## Dependency injection
+
+```csharp
+public class StorageController : ControllerBase
+{
+    private readonly IStorageService _storageService;
+    private readonly ErrLogIOService _errLogIO;
+
+    public StorageController(IStorageService storageService, ErrLogIOService errLogIO)
+    {
+        _storageService = storageService;
+        _errLogIO = errLogIO;
+    }
+
+    [HttpPost("upload")]
+    public async Task<IActionResult> UploadFileAsync(CancellationToken ct)
+    {
+        try
+        {
+            var stream = Request.BodyReader.AsStream();
+            await _storageService.UploadFileAsync(stream, ct);
+
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            await _errLogIO.LogExceptionAsync(
+                ex, Request.HttpContext, cancellationToken: ct);
+
+            return BadRequest(ex.Message);
+        }
+    }
+}
+```
